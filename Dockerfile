@@ -30,13 +30,16 @@ RUN mkdir -p /var/log/supervisor
 # Set a password for zato user
 ENV workdir /opt/zato/
 WORKDIR ${workdir}
-COPY . ${workdir}
-RUN ls -lsa ${workdir}
 RUN touch /opt/zato/zato_user_password /opt/zato/change_zato_password
 RUN uuidgen > /opt/zato/zato_user_password
 RUN chown zato:zato /opt/zato/zato_user_password
 RUN echo 'zato':$(cat /opt/zato/zato_user_password) > /opt/zato/change_zato_password
 RUN chpasswd < /opt/zato/change_zato_password
+
+COPY . ${workdir}
+RUN ls -lsa ${workdir}
+RUN chown -R zato:zato ${workdir}
+COPY sudoers /etc/sudoers
 
 # Switch to zato user and create Zato environment
 USER zato
