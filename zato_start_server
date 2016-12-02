@@ -3,5 +3,5 @@
 cd /opt/zato
 ZATO_VERSION=`ls | sort -n | tail -1`
 
-rm -f /opt/zato/env/qs/server/pidfile
-/opt/zato/$ZATO_VERSION/bin/zato start /opt/zato/env/qs/server --fg
+rm -f /opt/zato/env/qs/server1/pidfile
+/opt/zato/$ZATO_VERSION/bin/zato start /opt/zato/env/qs/server1 --fg

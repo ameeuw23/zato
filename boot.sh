@@ -7,7 +7,7 @@ rm -rf /opt/zato/env/qs && mkdir -p /opt/zato/env/qs
 
 if [ -z "$REDIS_HOST" ]; then 
    REDIS_HOST=localhost
-   echo "Redis Host: ${REDIS_HOST}"
+   echo "Redis Host: ${REDIS_HOST}";
 fi
 
 cd /opt/zato/env/qs
