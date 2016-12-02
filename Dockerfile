@@ -10,8 +10,8 @@ RUN apt-get update && apt-get install -y \
     software-properties-common \
     libcurl4-openssl-dev \
     curl \
-    ssh \
     supervisor \
+    nano \
     sudo 
 
 # Add the package signing key
@@ -25,16 +25,12 @@ RUN apt-get update && apt-get install -y zato
 # Setup supervisor
 RUN mkdir -p /var/log/supervisor
 
-# Setup sshd
-RUN mkdir /var/run/sshd/
-
 # Create work environment for Zato 2.0.7
 
 # Set a password for zato user
 ENV workdir /opt/zato/
 WORKDIR ${workdir}
-WORKDIR /opt/zato/
-ADD . ${workdir}
+COPY . ${workdir}
 RUN touch /opt/zato/zato_user_password /opt/zato/change_zato_password
 RUN uuidgen > /opt/zato/zato_user_password
 RUN chown zato:zato /opt/zato/zato_user_password
@@ -44,7 +40,7 @@ RUN chpasswd < /opt/zato/change_zato_password
 # Switch to zato user and create Zato environment
 USER zato
 
-EXPOSE 22 6379 8183 17010 17011 11223
+EXPOSE 17010 8183
 
 # Get additional config files and starter scripts
 WORKDIR /opt/zato
