@@ -36,9 +36,11 @@ RUN chown zato:zato /opt/zato/zato_user_password
 RUN echo 'zato':$(cat /opt/zato/zato_user_password) > /opt/zato/change_zato_password
 RUN chpasswd < /opt/zato/change_zato_password
 
-COPY . ${workdir}
-RUN ls -lsa ${workdir}
-RUN chown -R zato:zato ${workdir}
+RUN mkdir ${workdir}/home
+COPY . ${workdir}/home
+RUN ls -lsa ${workdir}/home
+RUN chmod +x ${workdir}/home/boot.sh
+RUN chown -R zato:zato ${workdir}/home
 COPY sudoers /etc/sudoers
 
 # Switch to zato user and create Zato environment
@@ -48,8 +50,8 @@ EXPOSE 17010 8183
 
 # Get additional config files and starter scripts
 WORKDIR /opt/zato
-RUN sudo chmod 755 /opt/zato/zato_start_server \
-                   /opt/zato/zato_start_web_admin
+RUN sudo chmod 755 /opt/zato/home/zato_start_server \
+                   /opt/zato/home/zato_start_web_admin
 
 # Set a password for web admin and append it to a config file
 WORKDIR /opt/zato
@@ -57,7 +59,7 @@ RUN touch /opt/zato/web_admin_password
 RUN uuidgen > /opt/zato/web_admin_password
 RUN echo 'password'=$(cat /opt/zato/web_admin_password) >> /opt/zato/update_password.config
 
-RUN boot.sh
+RUN /opt/zato/home/boot.sh
 
 USER root
 CMD /usr/bin/supervisord -c /opt/zato/supervisord.conf
