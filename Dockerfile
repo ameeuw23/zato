@@ -31,6 +31,7 @@ RUN mkdir -p /var/log/supervisor
 ENV workdir /opt/zato/
 WORKDIR ${workdir}
 COPY . ${workdir}
+RUN ls -lsa ${workdir}
 RUN touch /opt/zato/zato_user_password /opt/zato/change_zato_password
 RUN uuidgen > /opt/zato/zato_user_password
 RUN chown zato:zato /opt/zato/zato_user_password
@@ -44,8 +45,8 @@ EXPOSE 17010 8183
 
 # Get additional config files and starter scripts
 WORKDIR /opt/zato
-RUN chmod 755 /opt/zato/zato_start_server \
-              /opt/zato/zato_start_web_admin
+RUN sudo chmod 755 /opt/zato/zato_start_server \
+                   /opt/zato/zato_start_web_admin
 
 # Set a password for web admin and append it to a config file
 WORKDIR /opt/zato
