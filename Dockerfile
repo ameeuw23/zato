@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     software-properties-common \
     libcurl4-openssl-dev \
     curl \
+    redis-server \
     supervisor \
     nano \
     sudo 

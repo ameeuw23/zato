@@ -6,6 +6,7 @@ mkdir -p /opt/zato/env/qs
 rm -rf /opt/zato/env/qs && mkdir -p /opt/zato/env/qs
 
 if [ -z "$REDIS_HOST" ]; then 
+   sudo service redis-server start
    REDIS_HOST=localhost
    echo "Redis Host: ${REDIS_HOST}";
 fi
