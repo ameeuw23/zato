@@ -58,18 +58,22 @@ RUN sudo chmod 755 /opt/zato/home/zato_start_server \
 WORKDIR /opt/zato
 RUN touch /opt/zato/web_admin_password
 RUN uuidgen > /opt/zato/web_admin_password
-RUN echo 'password'=$(cat /opt/zato/web_admin_password) >> /opt/zato/update_password.config
+RUN echo 'password'=$(cat /opt/zato/web_admin_password) >> /opt/zato/home/update_password.config
 
 ENV ZATO_BIN /opt/zato/*.*/bin/zato
 
 RUN mkdir -p /opt/zato/env/qs
 RUN rm -rf /opt/zato/env/qs && mkdir -p /opt/zato/env/qs
+RUN ls -lsa /opt/zato/env/qs
 
-RUN if $REDIS_HOST -eq "localhost"; then sudo service redis-server start; fi
+ARG REDIS_HOST
+ENV REDIS_HOST localhost
+RUN if [ "${REDIS_HOST}" = "localhost" ]; then sudo service redis-server start; fi
+RUN echo $REDIS_HOST
 
 WORKDIR /opt/zato/env/qs
-RUN $ZATO_BIN quickstart create . sqlite $REDIS_HOST 6379 --verbose --kvdb_password "" --cluster_name "servicebus-stack" --servers 1
-RUN $ZATO_BIN from-config /opt/zato/update_password.config
+RUN $ZATO_BIN quickstart create /opt/zato/env/qs sqlite ${REDIS_HOST} 6379 --verbose --kvdb_password "" --cluster_name "servicebus-stack" --servers 1
+RUN $ZATO_BIN from-config /opt/zato/home/update_password.config
 RUN sed -i 's/127.0.0.1:11223/0.0.0.0:11223/g' /opt/zato/env/qs/load-balancer/config/repo/zato.config
 
 USER root
